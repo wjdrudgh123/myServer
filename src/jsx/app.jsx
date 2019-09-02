@@ -1,8 +1,8 @@
 const React = require("react");
 const ReactDom = require("react-dom");
-const Test = require("./test.jsx");
+const View = require("./view.jsx");
 
 ReactDom.render(
-    <Test/>,
+    <View/>,
     document.getElementById("container")
 )

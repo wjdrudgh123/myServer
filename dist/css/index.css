@@ -1,0 +1,123 @@
+html, body{
+    margin:0;
+    padding:0;
+    height: 100%;
+}
+
+#container{
+    height: 100%;
+}
+#view{
+    height: 100%;
+    display: grid;
+    grid-template-rows: 80px 1fr;
+}
+
+#header{
+    text-align: center;
+}
+#header h1{
+    margin: 0;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#button{
+    position: absolute;
+    top:25px;
+    left: 20px;
+}
+
+#button span{
+    display: block;
+    margin:6px;
+    width: 40px;
+    height: 3px;
+    background: #333;
+}
+
+/* 메뉴 */
+.menu{
+    text-align: center;
+    height: calc(100% - 80px);
+    width: 0;
+    max-width: 0;
+    position: absolute;
+    top: 80px;
+    left:0;
+    transition: 0.3s;
+    overflow:hidden;
+    background: #b2bec3;
+}
+
+.on{
+    width: 350px;
+    max-width:350px;
+}
+
+#Content > a{
+    display: block;
+    text-align: center;
+    text-decoration: none;
+    font-size: 20px;
+}
+
+.folders{
+    display: grid;
+    grid-row-gap: 10px;
+}
+.folder{
+    height: 60px;
+    display: grid;
+    grid-template-columns: 60px 1fr;
+}
+.folders img{
+    width: 100%;
+    height: 100%;
+}
+.folders h5{
+    margin: 0 10px;
+    height: 100%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+/* dialog */
+.dialog{
+    position: absolute;
+    width: 250px;
+    height: 180px;
+    top:50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: 1px solid black;
+    display: none;
+}
+#dialogInput{
+    display: flex;
+    justify-self: center;
+    align-self: center;
+    border: none;
+    border-bottom: 1px solid black;
+    width:90%;
+    height: 40px;
+}
+#dialogBtn{
+    display: flex;
+    justify-content: flex-end;
+}
+.dialog a{
+    margin:5px 10px;
+}
+
+.show{
+    background: white;
+    display: grid;
+    grid-template-rows: 1fr 40px;
+}
+.s{
+    background: #b2bec3;
+}/*----------------------------------------*/
