@@ -5,9 +5,9 @@ const SawContent = (props) => {
     let data;
     props.fileViewOpen ? state = "viewOpen" : state = "viewClose";
     if(props.filename.indexOf(".txt") !== -1){
-        data = <h3>{props.filecontent}</h3>
+        data = <h3 height="100%">{props.filecontent}</h3>
     }else{
-        data = <img src={props.filecontent}/>
+        data = <img src={props.filecontent} width="100%" height="90%"/>
     }
     return(
         <div className={"sawView "+state}>
