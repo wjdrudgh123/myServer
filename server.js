@@ -90,6 +90,7 @@ app.post("/getFileContext", (req, res)=>{
             "filename":req.body.fileName,
             "filecontent":data
             }));     
+            res.end();
         });
     }
 });
