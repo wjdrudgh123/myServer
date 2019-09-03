@@ -12,7 +12,7 @@ app.use(express.static("dist"));
 app.use(express.static("materials"));
 
 app.get("/", (req, res) => {
-    res.sendFile(__dirname+"/index.html");
+    res.sendFile(__dirname+"/dist/html/index.html");
 });
 
 app.post("/getFolderList", (req, res)=>{
@@ -89,11 +89,10 @@ app.post("/getFileContext", (req, res)=>{
             res.send(JSON.stringify({
             "filename":req.body.fileName,
             "filecontent":data
-            }));     
+            }));
             res.end();
         });
     }
 });
 
-app.listen(process.env.PORT || 3000, ()=>{
-});
+app.listen(process.env.PORT || 3000);

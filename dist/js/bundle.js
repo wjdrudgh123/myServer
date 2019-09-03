@@ -29401,7 +29401,7 @@ class Folders extends React.Component {
           key: i,
           onClick: this.props.getFileContext
         }, React.createElement("img", {
-          src: "dist/img/txt.png",
+          src: "../img/txt.png",
           className: this.props.folderList[i]
         }), React.createElement("h5", {
           className: this.props.folderList[i]
@@ -29412,7 +29412,7 @@ class Folders extends React.Component {
           key: i,
           onClick: this.props.getFileContext
         }, React.createElement("img", {
-          src: "dist/img/image.png",
+          src: "../img/image.png",
           className: this.props.folderList[i]
         }), React.createElement("h5", {
           className: this.props.folderList[i]
@@ -29423,7 +29423,7 @@ class Folders extends React.Component {
           key: i,
           onClick: this.props.getFolder
         }, React.createElement("img", {
-          src: "dist/img/folder.png",
+          src: "../img/folder.png",
           className: this.props.folderList[i]
         }), React.createElement("h5", {
           className: this.props.folderList[i]
@@ -29437,7 +29437,7 @@ class Folders extends React.Component {
         key: "shift",
         onClick: this.props.getFolder
       }, React.createElement("img", {
-        src: "dist/img/folder.png",
+        src: "../img/folder.png",
         className: "back"
       }), React.createElement("h5", {
         className: "back"
