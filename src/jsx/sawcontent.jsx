@@ -13,7 +13,7 @@ const SawContent = (props) => {
         <div className={"sawView "+state}>
             <div id="sawHeader">
                 <h3>{props.filename}</h3>
-                <img src="dist/img/close.png" onClick={props.fileCloseBtn}/>
+                <img src="../img/close.png" onClick={props.fileCloseBtn}/>
             </div>
             <div id="sawContent">
                 {data}
