@@ -29298,26 +29298,547 @@ const React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 
 const ReactDom = __webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js");
 
-const Test = __webpack_require__(/*! ./test.jsx */ "./src/jsx/test.jsx");
+const View = __webpack_require__(/*! ./view.jsx */ "./src/jsx/view.jsx");
 
-ReactDom.render(React.createElement(Test, null), document.getElementById("container"));
+ReactDom.render(React.createElement(View, null), document.getElementById("container"));
 
 /***/ }),
 
-/***/ "./src/jsx/test.jsx":
+/***/ "./src/jsx/content.jsx":
+/*!*****************************!*\
+  !*** ./src/jsx/content.jsx ***!
+  \*****************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+const React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+
+const Folders = __webpack_require__(/*! ./folders.jsx */ "./src/jsx/folders.jsx");
+
+class Content extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    let list;
+    this.props.folderList.length === 0 && this.props.flag === 0 ? list = React.createElement("a", {
+      onClick: this.props.showDialog
+    }, "+ \uD3F4\uB354 \uB9CC\uB4E4\uAE30") : list = React.createElement(Folders, {
+      file: this.props.file,
+      folderList: this.props.folderList,
+      flag: this.props.flag,
+      getFolder: this.props.getFolderList,
+      getFileContext: this.props.getFileContext
+    });
+    return React.createElement("div", {
+      id: "Content"
+    }, list);
+  }
+
+}
+
+module.exports = Content;
+
+/***/ }),
+
+/***/ "./src/jsx/dialog.jsx":
+/*!****************************!*\
+  !*** ./src/jsx/dialog.jsx ***!
+  \****************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+const React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+
+const Dialog = props => {
+  let sh;
+  props.showHidden ? sh = "show" : sh = "hidden";
+  return React.createElement("div", {
+    className: "dialog " + sh
+  }, React.createElement("input", {
+    type: "text",
+    id: "dialogInput",
+    autoComplete: "off",
+    placeholder: "\uB9CC\uB4E4 \uD3F4\uB354 \uC774\uB984",
+    value: props.foldername,
+    onChange: props.inputFolderName,
+    onKeyDown: props.enter
+  }), React.createElement("div", {
+    id: "dialogBtn"
+  }, React.createElement("a", {
+    onClick: props.makeFolder
+  }, "\uB9CC\uB4E4\uAE30"), React.createElement("a", {
+    onClick: props.showDialog
+  }, "\uCDE8\uC18C")));
+};
+
+module.exports = Dialog;
+
+/***/ }),
+
+/***/ "./src/jsx/folders.jsx":
+/*!*****************************!*\
+  !*** ./src/jsx/folders.jsx ***!
+  \*****************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+const React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+
+class Folders extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    let folders = []; // console.log(this.props.file)
+    // if(this.props.folderList.indexOf("context") !== -1){
+    //     folders.push(
+    //         <div className="file" key="file">
+    //             <h5 className={this.props.folderList}>{this.props.file}</h5>
+    //         </div>);
+    // }else{
+
+    for (let i = 0; i < this.props.folderList.length; i++) {
+      if (this.props.folderList[i].indexOf("txt") !== -1) {
+        folders.push(React.createElement("div", {
+          className: "folder",
+          key: i,
+          onClick: this.props.getFileContext
+        }, React.createElement("img", {
+          src: "../img/txt.png",
+          className: this.props.folderList[i]
+        }), React.createElement("h5", {
+          className: this.props.folderList[i]
+        }, this.props.folderList[i])));
+      } else if (this.props.folderList[i].indexOf("jpg") !== -1 || this.props.folderList[i].indexOf("png") !== -1 || this.props.folderList[i].indexOf("jpeg") !== -1) {
+        folders.push(React.createElement("div", {
+          className: "folder",
+          key: i,
+          onClick: this.props.getFileContext
+        }, React.createElement("img", {
+          src: "../img/image.png",
+          className: this.props.folderList[i]
+        }), React.createElement("h5", {
+          className: this.props.folderList[i]
+        }, this.props.folderList[i])));
+      } else {
+        folders.push(React.createElement("div", {
+          className: "folder",
+          key: i,
+          onClick: this.props.getFolder
+        }, React.createElement("img", {
+          src: "../img/folder.png",
+          className: this.props.folderList[i]
+        }), React.createElement("h5", {
+          className: this.props.folderList[i]
+        }, this.props.folderList[i])));
+      }
+    }
+
+    if (this.props.flag !== 0) {
+      folders.unshift(React.createElement("div", {
+        className: "folder",
+        key: "shift",
+        onClick: this.props.getFolder
+      }, React.createElement("img", {
+        src: "../img/folder.png",
+        className: "back"
+      }), React.createElement("h5", {
+        className: "back"
+      }, "..")));
+    }
+
+    return React.createElement("div", {
+      className: "folders"
+    }, folders);
+  }
+
+}
+
+module.exports = Folders;
+
+/***/ }),
+
+/***/ "./src/jsx/header.jsx":
+/*!****************************!*\
+  !*** ./src/jsx/header.jsx ***!
+  \****************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+const React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+
+const MenuButton = __webpack_require__(/*! ./menubutton.jsx */ "./src/jsx/menubutton.jsx");
+
+const Header = props => {
+  let header;
+  props.currentFolder === "" ? header = "My Cloud" : header = props.currentFolder;
+  return React.createElement("div", {
+    id: "header"
+  }, React.createElement(MenuButton, props), React.createElement("h1", null, header));
+};
+
+module.exports = Header;
+
+/***/ }),
+
+/***/ "./src/jsx/menu.jsx":
 /*!**************************!*\
-  !*** ./src/jsx/test.jsx ***!
+  !*** ./src/jsx/menu.jsx ***!
   \**************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 const React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 
-const Test = props => {
-  return React.createElement("h1", null, "Hello");
+const Menu = props => {
+  let onOff;
+  props.onOff ? onOff = "on" : onOff = "off";
+  return React.createElement("div", {
+    className: "menu " + onOff
+  }, React.createElement("div", {
+    id: "makeFolder"
+  }, React.createElement("h3", {
+    onClick: props.showDialog
+  }, "\uD3F4\uB354\uB9CC\uB4E4\uAE30")), React.createElement("div", {
+    id: "uploadFile"
+  }, React.createElement("input", {
+    type: "file",
+    id: "file",
+    name: "upload",
+    hidden: true,
+    onChange: props.selectFile
+  }), React.createElement("h3", {
+    onClick: props.clickUpload
+  }, "\uD30C\uC77C\uC62C\uB9AC\uAE30")), React.createElement("div", {
+    id: "deleteFile"
+  }, React.createElement("h3", null, "\uC0AD\uC81C")));
 };
 
-module.exports = Test;
+module.exports = Menu;
+
+/***/ }),
+
+/***/ "./src/jsx/menubutton.jsx":
+/*!********************************!*\
+  !*** ./src/jsx/menubutton.jsx ***!
+  \********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+const React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+
+const MenuButton = props => {
+  return React.createElement("div", {
+    id: "button",
+    onClick: props.clickBtn
+  }, React.createElement("span", null), React.createElement("span", null), React.createElement("span", null));
+};
+
+module.exports = MenuButton;
+
+/***/ }),
+
+/***/ "./src/jsx/sawcontent.jsx":
+/*!********************************!*\
+  !*** ./src/jsx/sawcontent.jsx ***!
+  \********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+const React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+
+const SawContent = props => {
+  let state;
+  let data;
+  props.fileViewOpen ? state = "viewOpen" : state = "viewClose";
+
+  if (props.filename.indexOf(".txt") !== -1) {
+    data = React.createElement("h3", null, props.filecontent);
+  } else {
+    data = React.createElement("img", {
+      src: props.filecontent
+    });
+  }
+
+  return React.createElement("div", {
+    className: "sawView " + state
+  }, React.createElement("div", {
+    id: "sawHeader"
+  }, React.createElement("h3", null, props.filename), React.createElement("img", {
+    src: "../img/close.png",
+    onClick: props.fileCloseBtn
+  })), React.createElement("div", {
+    id: "sawContent"
+  }, data));
+};
+
+module.exports = SawContent;
+
+/***/ }),
+
+/***/ "./src/jsx/view.jsx":
+/*!**************************!*\
+  !*** ./src/jsx/view.jsx ***!
+  \**************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+
+const React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+
+const Header = __webpack_require__(/*! ./header.jsx */ "./src/jsx/header.jsx");
+
+const Content = __webpack_require__(/*! ./content.jsx */ "./src/jsx/content.jsx");
+
+const Menu = __webpack_require__(/*! ./menu.jsx */ "./src/jsx/menu.jsx");
+
+const SawContent = __webpack_require__(/*! ./sawcontent.jsx */ "./src/jsx/sawcontent.jsx");
+
+const Dialog = __webpack_require__(/*! ./dialog.jsx */ "./src/jsx/dialog.jsx");
+
+class View extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      folderList: [],
+      fileList: [],
+      isMenuToggled: false,
+      isDialogToggled: false,
+      foldername: "",
+      flag: 0,
+      currentFolder: "",
+      folderPath: "",
+      filecontent: "",
+      filename: "",
+      fileViewOpen: false
+    };
+    this.getFolderList = this.getFolderList.bind(this);
+    this.inputFolderName = this.inputFolderName.bind(this);
+    this.handleMakeFolder = this.handleMakeFolder.bind(this);
+    this.handleClickMenuBtn = this.handleClickMenuBtn.bind(this);
+    this.showDialog = this.showDialog.bind(this);
+    this.handleInputEnter = this.handleInputEnter.bind(this);
+    this.handleUploadBtnClick = this.handleUploadBtnClick.bind(this);
+    this.handleSelectedFile = this.handleSelectedFile.bind(this);
+    this.getFileContext = this.getFileContext.bind(this);
+    this.fileViewOpen = this.fileViewOpen.bind(this);
+    this.fileViewCloseBtn = this.fileViewCloseBtn.bind(this);
+  }
+
+  componentDidMount() {
+    this.getFolderList();
+  }
+
+  getFolderList(e) {
+    let folder;
+
+    if (e === undefined) {
+      this.state.currentFolder === "" ? folder = "" : folder = this.state.currentFolder;
+    } else if (e.target.className === "back") {
+      let temp = this.state.folderPath.split("/");
+      let avertPath = temp[0];
+
+      for (let i = 1; i < temp.length - 1; i++) {
+        avertPath += "/" + temp[i];
+      }
+
+      this.setState({
+        folderPath: avertPath,
+        currentFolder: temp[temp.length - 2],
+        file: ""
+      });
+      folder = avertPath;
+    } else {
+      this.setState({
+        currentFolder: e.target.className,
+        folderPath: this.state.folderPath + "/" + e.target.className
+      });
+      folder = e.target.className;
+    }
+
+    fetch("/getFolderList", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        "folder": folder,
+        "path": this.state.folderPath
+      })
+    }).then(res => res.json()).then(result => {
+      this.setState({
+        folderList: result.file,
+        flag: result.no
+      });
+    });
+  }
+
+  showDialog(e) {
+    if (e === undefined) {
+      this.setState(prevState => ({
+        isDialogToggled: !prevState.isDialogToggled
+      }));
+    } else if (e.target.innerText === "폴더만들기") {
+      this.setState(prevState => ({
+        isDialogToggled: !prevState.isDialogToggled,
+        isMenuToggled: !prevState.isMenuToggled
+      }));
+    } else {
+      this.setState(prevState => ({
+        isDialogToggled: !prevState.isDialogToggled
+      }));
+    }
+  }
+
+  handleMakeFolder() {
+    fetch("/makeFolder", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        "path": this.state.folderPath,
+        "foldername": this.state.foldername
+      })
+    }).then(res => res.text()).then(result => {
+      if (result === "success") {
+        this.showDialog();
+        this.getFolderList();
+        this.setState({
+          foldername: ""
+        });
+      }
+    });
+  }
+
+  handleInputEnter(e) {
+    if (e.keyCode === 13) {
+      this.handleMakeFolder();
+    }
+  }
+
+  inputFolderName(e) {
+    this.setState({
+      foldername: e.target.value
+    });
+  }
+
+  handleClickMenuBtn() {
+    this.setState(prevState => ({
+      isMenuToggled: !prevState.isMenuToggled
+    }));
+  }
+
+  handleUploadBtnClick(e) {
+    e.preventDefault();
+    document.getElementById("file").click();
+  }
+
+  handleSelectedFile(e) {
+    let file = document.getElementById(e.target.id).files[0];
+    let formData = new FormData();
+    formData.append("uploadFile", file);
+    formData.append("filePath", this.state.folderPath);
+    fetch("/uploadFile", {
+      method: "POST",
+      body: formData
+    }).then(response => response.text()).then(result => {
+      if (result === "success") {
+        this.getFolderList();
+        this.handleClickMenuBtn();
+      }
+
+      ;
+    });
+  }
+
+  getFileContext(e) {
+    fetch("/getFileContext", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        "fileName": e.target.className,
+        "filePath": this.state.folderPath
+      })
+    }).then(res => res.blob()).then(result => {
+      var reader = new FileReader();
+
+      if (result.type.indexOf("image/") !== -1) {
+        reader.onload = e => {
+          this.setState({
+            filecontent: e.target.result
+          });
+        };
+
+        reader.readAsDataURL(result);
+      } else {
+        reader.onload = e => {
+          let jsone = JSON.parse(e.currentTarget.result);
+          this.setState({
+            filecontent: jsone.filecontent,
+            filename: jsone.filename
+          });
+        };
+
+        reader.readAsText(result);
+      }
+
+      this.fileViewOpen();
+    });
+  }
+
+  fileViewOpen() {
+    this.setState(prevState => ({
+      fileViewOpen: !prevState.fileViewOpen
+    }));
+  }
+
+  fileViewCloseBtn(e) {
+    this.setState(prevState => ({
+      fileViewOpen: !prevState.fileViewOpen,
+      filename: "",
+      filecontent: ""
+    }));
+  }
+
+  render() {
+    let dialogSH;
+    this.state.isDialogToggled ? dialogSH = "s" : dialogSH = "h";
+    return React.createElement("div", {
+      id: "view",
+      className: dialogSH
+    }, React.createElement(Header, _extends({}, this.state, {
+      clickBtn: this.handleClickMenuBtn
+    })), React.createElement(Menu, {
+      onOff: this.state.isMenuToggled,
+      showDialog: this.showDialog,
+      clickUpload: this.handleUploadBtnClick,
+      selectFile: this.handleSelectedFile
+    }), React.createElement(Content, _extends({}, this.state, {
+      getFolderList: this.getFolderList,
+      showDialog: this.showDialog,
+      getFileContext: this.getFileContext
+    })), React.createElement(Dialog, {
+      showHidden: this.state.isDialogToggled,
+      foldername: this.state.foldername,
+      inputFolderName: this.inputFolderName,
+      makeFolder: this.handleMakeFolder,
+      showDialog: this.showDialog,
+      enter: this.handleInputEnter
+    }), React.createElement(SawContent, _extends({}, this.state, {
+      fileCloseBtn: this.fileViewCloseBtn
+    })));
+  }
+
+}
+
+module.exports = View;
 
 /***/ })
 
