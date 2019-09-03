@@ -29562,7 +29562,7 @@ const SawContent = props => {
   }, React.createElement("div", {
     id: "sawHeader"
   }, React.createElement("h3", null, props.filename), React.createElement("img", {
-    src: "dist/img/close.png",
+    src: "../img/close.png",
     onClick: props.fileCloseBtn
   })), React.createElement("div", {
     id: "sawContent"
