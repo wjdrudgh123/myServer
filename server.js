@@ -76,10 +76,10 @@ app.post("/uploadFile", (req, res)=>{
 
 app.post("/getFileContext", (req, res)=>{
     let path = __dirname+"/materials"+req.body.filePath+"/"+req.body.fileName;
-    if(req.body.fileName.indexOf(".png") !== -1){
+    if(req.body.fileName.indexOf(".png") !== -1 || req.body.fileName.indexOf(".jpeg") !== -1 || req.body.fileName.indexOf(".jpg") !== -1){
         fs.readFile(path, (err, data)=>{
             res.writeHead(200, {
-                "Content-Type":"image/png"
+                "Content-Type":"image/"+req.body.fileName.split(".")[req.body.fileName.split(".").length-1]
             });
             res.write(data);
             res.end();
