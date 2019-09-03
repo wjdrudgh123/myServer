@@ -29417,6 +29417,17 @@ class Folders extends React.Component {
         }), React.createElement("h5", {
           className: this.props.folderList[i]
         }, this.props.folderList[i])));
+      } else if (this.props.folderList[i].indexOf("pdf") !== -1) {
+        folders.push(React.createElement("div", {
+          className: "folder",
+          key: i,
+          onClick: this.props.getFileContext
+        }, React.createElement("img", {
+          src: "../img/image.png",
+          className: this.props.folderList[i]
+        }), React.createElement("h5", {
+          className: this.props.folderList[i]
+        }, this.props.folderList[i])));
       } else {
         folders.push(React.createElement("div", {
           className: "folder",
@@ -29550,10 +29561,14 @@ const SawContent = props => {
   props.fileViewOpen ? state = "viewOpen" : state = "viewClose";
 
   if (props.filename.indexOf(".txt") !== -1) {
-    data = React.createElement("h3", null, props.filecontent);
+    data = React.createElement("h3", {
+      height: "100%"
+    }, props.filecontent);
   } else {
     data = React.createElement("img", {
-      src: props.filecontent
+      src: props.filecontent,
+      width: "100%",
+      height: "90%"
     });
   }
 

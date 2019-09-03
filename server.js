@@ -2,6 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const fs = require("fs");
 const formidable = require("formidable");
+const PDFParser = require("./node_modules/pdfreader/PdfReader");
 
 const app = express();
 
@@ -76,7 +77,7 @@ app.post("/uploadFile", (req, res)=>{
 
 app.post("/getFileContext", (req, res)=>{
     let path = __dirname+"/materials"+req.body.filePath+"/"+req.body.fileName;
-    if(req.body.fileName.indexOf(".png") !== -1 || req.body.fileName.indexOf(".jpeg") !== -1 || req.body.fileName.indexOf(".jpg") !== -1){
+    if(req.body.fileName.match(/.png/ig) !== null || req.body.fileName.match(/.jpeg/ig) !== null || req.body.fileName.match(/.jpg/ig) !== null){
         fs.readFile(path, (err, data)=>{
             res.writeHead(200, {
                 "Content-Type":"image/"+req.body.fileName.split(".")[req.body.fileName.split(".").length-1]
@@ -84,6 +85,14 @@ app.post("/getFileContext", (req, res)=>{
             res.write(data);
             res.end();
         });
+    }else if(req.body.fileName.match(/.pdf/gi) !== null){
+        var raw = {};
+        let pdfBuffer = fs.readFileSync(path);
+        new PDFParser().parseBuffer(pdfBuffer, function(err, item) {
+            if (err) callback(err);
+            else if (!item) console.log(item.page);
+            else if (item.text) (rows[item.y] = rows[item.y] || []).push(item.text);
+          });
     }else{
         fs.readFile(path, "utf8",(err, data)=>{
             res.send(JSON.stringify({
