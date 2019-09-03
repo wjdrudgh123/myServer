@@ -3,7 +3,6 @@ const React = require("react");
 const Menu = (props) => {
     let onOff;
     props.onOff? onOff = "on":onOff = "off";
-    console.log()
     return(
         <div className={"menu "+onOff}>
             <div id="makeFolder">

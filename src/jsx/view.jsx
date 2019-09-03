@@ -2,6 +2,7 @@ const React = require("react");
 const Header = require("./header.jsx");
 const Content = require("./content.jsx");
 const Menu = require("./menu.jsx");
+const SawContent = require("./sawcontent.jsx");
 const Dialog = require("./dialog.jsx");
 
 class View extends React.Component{
@@ -16,7 +17,9 @@ class View extends React.Component{
             flag:0,
             currentFolder:"",
             folderPath:"",
-            file:""
+            filecontent:"",
+            filename:"",
+            fileViewOpen:false
         }
         this.getFolderList = this.getFolderList.bind(this);
         this.inputFolderName = this.inputFolderName.bind(this);
@@ -27,6 +30,8 @@ class View extends React.Component{
         this.handleUploadBtnClick = this.handleUploadBtnClick.bind(this);
         this.handleSelectedFile = this.handleSelectedFile.bind(this);
         this.getFileContext = this.getFileContext.bind(this);
+        this.fileViewOpen = this.fileViewOpen.bind(this);
+        this.fileViewCloseBtn = this.fileViewCloseBtn.bind(this);
     }
     componentDidMount(){
         this.getFolderList();
@@ -139,7 +144,6 @@ class View extends React.Component{
             };
         });
     }
-
     getFileContext(e){
         fetch("/getFileContext", {
             method:"POST",
@@ -150,15 +154,40 @@ class View extends React.Component{
                 "fileName":e.target.className,
                 "filePath":this.state.folderPath
             })
-        }).then((res)=>res.json()).then((result)=>{
-            this.setState({
-                file:result.fileContext,
-                folderList:result.folderList,
-                flag:result.flag
-            });
+        }).then((res)=>res.blob()).then((result)=>{
+            var reader = new FileReader();
+            if(result.type.indexOf("image/") !== -1){
+                reader.onload = (e) => {
+                    this.setState({
+                        filecontent:e.target.result
+                    })
+                }
+                reader.readAsDataURL(result);
+            }else{
+                reader.onload = (e) =>{
+                    let jsone = JSON.parse(e.currentTarget.result);
+                    this.setState({
+                        filecontent:jsone.filecontent,
+                        filename:jsone.filename
+                    });
+                }
+                reader.readAsText(result);
+            }
+            this.fileViewOpen();
         });
     }
-
+    fileViewOpen(){
+        this.setState(prevState => ({
+            fileViewOpen:!prevState.fileViewOpen
+        }));
+    }
+    fileViewCloseBtn(e){
+        this.setState(prevState => ({
+            fileViewOpen:!prevState.fileViewOpen,
+            filename:"",
+            filecontent:""
+        }));
+    }
     render(){
         let dialogSH;
         this.state.isDialogToggled ? dialogSH = "s" : dialogSH = "h";
@@ -169,6 +198,7 @@ class View extends React.Component{
                 <Content {...this.state} getFolderList={this.getFolderList} showDialog = {this.showDialog} getFileContext={this.getFileContext}/>
                 <Dialog showHidden = {this.state.isDialogToggled} foldername = {this.state.foldername} inputFolderName = {this.inputFolderName} makeFolder = {this.handleMakeFolder}
                         showDialog = {this.showDialog} enter = {this.handleInputEnter}/>
+                <SawContent {...this.state} fileCloseBtn={this.fileViewCloseBtn}/>
             </div>
         );    
     }

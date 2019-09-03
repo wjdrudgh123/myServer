@@ -76,13 +76,22 @@ app.post("/uploadFile", (req, res)=>{
 
 app.post("/getFileContext", (req, res)=>{
     let path = __dirname+"/materials"+req.body.filePath+"/"+req.body.fileName;
-    fs.readFile(path, "utf8",(err, data)=>{
-        res.send(JSON.stringify({
-            "folderList":"context",
-            "fileContext":data,
-            "flag":3
-        }));
-    });
+    if(req.body.fileName.indexOf(".png") !== -1){
+        fs.readFile(path, (err, data)=>{
+            res.writeHead(200, {
+                "Content-Type":"image/png"
+            });
+            res.write(data);
+            res.end();
+        });
+    }else{
+        fs.readFile(path, "utf8",(err, data)=>{
+            res.send(JSON.stringify({
+            "filename":req.body.fileName,
+            "filecontent":data
+            }));     
+        });
+    }
 });
 
 app.listen(3000, ()=>{

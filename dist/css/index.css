@@ -112,7 +112,6 @@ html, body{
 .dialog a{
     margin:5px 10px;
 }
-
 .show{
     background: white;
     display: grid;
@@ -121,3 +120,39 @@ html, body{
 .s{
     background: #b2bec3;
 }/*----------------------------------------*/
+
+.sawView{
+    position: absolute;
+    z-index: 3;
+    display: grid;
+    grid-template-rows: 66px 1fr;
+    top:10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 85%;
+    height: calc(90% - 10px);
+    background: #c8d6e5;
+}
+#sawHeader{
+    display: grid;
+    grid-template-columns: 1fr 20%;
+    border-bottom: 1px solid black;
+}
+#sawHeader > h3{
+    margin:0;
+    display: flex;
+    justify-self: center;
+    align-self: center;
+}
+#sawHeader > img{
+    margin: 10px;
+    height: 50px;
+    width: 50px;
+}
+#sawContent{
+    overflow: auto;
+    margin: 20px;
+}
+.viewClose{
+    display: none;
+}

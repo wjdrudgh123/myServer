@@ -29392,52 +29392,48 @@ class Folders extends React.Component {
   }
 
   render() {
-    let folders = [];
-    console.log(this.props.file);
+    let folders = []; // console.log(this.props.file)
+    // if(this.props.folderList.indexOf("context") !== -1){
+    //     folders.push(
+    //         <div className="file" key="file">
+    //             <h5 className={this.props.folderList}>{this.props.file}</h5>
+    //         </div>);
+    // }else{
 
-    if (this.props.folderList.indexOf("context") !== -1) {
-      folders.push(React.createElement("div", {
-        className: "file",
-        key: "file"
-      }, React.createElement("h5", {
-        className: this.props.folderList
-      }, this.props.file)));
-    } else {
-      for (let i = 0; i < this.props.folderList.length; i++) {
-        if (this.props.folderList[i].indexOf("txt") !== -1) {
-          folders.push(React.createElement("div", {
-            className: "folder",
-            key: i,
-            onClick: this.props.getFileContext
-          }, React.createElement("img", {
-            src: "../img/txt.png",
-            className: this.props.folderList[i]
-          }), React.createElement("h5", {
-            className: this.props.folderList[i]
-          }, this.props.folderList[i])));
-        } else if (this.props.folderList[i].indexOf("jpg") !== -1 || this.props.folderList[i].indexOf("png") !== -1 || this.props.folderList[i].indexOf("jpeg") !== -1) {
-          folders.push(React.createElement("div", {
-            className: "folder",
-            key: i,
-            onClick: this.props.getFileContext
-          }, React.createElement("img", {
-            src: "../img/image.png",
-            className: this.props.folderList[i]
-          }), React.createElement("h5", {
-            className: this.props.folderList[i]
-          }, this.props.folderList[i])));
-        } else {
-          folders.push(React.createElement("div", {
-            className: "folder",
-            key: i,
-            onClick: this.props.getFolder
-          }, React.createElement("img", {
-            src: "../img/folder.png",
-            className: this.props.folderList[i]
-          }), React.createElement("h5", {
-            className: this.props.folderList[i]
-          }, this.props.folderList[i])));
-        }
+    for (let i = 0; i < this.props.folderList.length; i++) {
+      if (this.props.folderList[i].indexOf("txt") !== -1) {
+        folders.push(React.createElement("div", {
+          className: "folder",
+          key: i,
+          onClick: this.props.getFileContext
+        }, React.createElement("img", {
+          src: "../img/txt.png",
+          className: this.props.folderList[i]
+        }), React.createElement("h5", {
+          className: this.props.folderList[i]
+        }, this.props.folderList[i])));
+      } else if (this.props.folderList[i].indexOf("jpg") !== -1 || this.props.folderList[i].indexOf("png") !== -1 || this.props.folderList[i].indexOf("jpeg") !== -1) {
+        folders.push(React.createElement("div", {
+          className: "folder",
+          key: i,
+          onClick: this.props.getFileContext
+        }, React.createElement("img", {
+          src: "../img/image.png",
+          className: this.props.folderList[i]
+        }), React.createElement("h5", {
+          className: this.props.folderList[i]
+        }, this.props.folderList[i])));
+      } else {
+        folders.push(React.createElement("div", {
+          className: "folder",
+          key: i,
+          onClick: this.props.getFolder
+        }, React.createElement("img", {
+          src: "../img/folder.png",
+          className: this.props.folderList[i]
+        }), React.createElement("h5", {
+          className: this.props.folderList[i]
+        }, this.props.folderList[i])));
       }
     }
 
@@ -29500,7 +29496,6 @@ const React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 const Menu = props => {
   let onOff;
   props.onOff ? onOff = "on" : onOff = "off";
-  console.log();
   return React.createElement("div", {
     className: "menu " + onOff
   }, React.createElement("div", {
@@ -29546,6 +29541,44 @@ module.exports = MenuButton;
 
 /***/ }),
 
+/***/ "./src/jsx/sawcontent.jsx":
+/*!********************************!*\
+  !*** ./src/jsx/sawcontent.jsx ***!
+  \********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+const React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+
+const SawContent = props => {
+  let state;
+  let data;
+  props.fileViewOpen ? state = "viewOpen" : state = "viewClose";
+
+  if (props.filename.indexOf(".txt") !== -1) {
+    data = React.createElement("h3", null, props.filecontent);
+  } else {
+    data = React.createElement("img", {
+      src: props.filecontent
+    });
+  }
+
+  return React.createElement("div", {
+    className: "sawView " + state
+  }, React.createElement("div", {
+    id: "sawHeader"
+  }, React.createElement("h3", null, props.filename), React.createElement("img", {
+    src: "../img/close.png",
+    onClick: props.fileCloseBtn
+  })), React.createElement("div", {
+    id: "sawContent"
+  }, data));
+};
+
+module.exports = SawContent;
+
+/***/ }),
+
 /***/ "./src/jsx/view.jsx":
 /*!**************************!*\
   !*** ./src/jsx/view.jsx ***!
@@ -29563,6 +29596,8 @@ const Content = __webpack_require__(/*! ./content.jsx */ "./src/jsx/content.jsx"
 
 const Menu = __webpack_require__(/*! ./menu.jsx */ "./src/jsx/menu.jsx");
 
+const SawContent = __webpack_require__(/*! ./sawcontent.jsx */ "./src/jsx/sawcontent.jsx");
+
 const Dialog = __webpack_require__(/*! ./dialog.jsx */ "./src/jsx/dialog.jsx");
 
 class View extends React.Component {
@@ -29577,7 +29612,9 @@ class View extends React.Component {
       flag: 0,
       currentFolder: "",
       folderPath: "",
-      file: ""
+      filecontent: "",
+      filename: "",
+      fileViewOpen: false
     };
     this.getFolderList = this.getFolderList.bind(this);
     this.inputFolderName = this.inputFolderName.bind(this);
@@ -29588,6 +29625,8 @@ class View extends React.Component {
     this.handleUploadBtnClick = this.handleUploadBtnClick.bind(this);
     this.handleSelectedFile = this.handleSelectedFile.bind(this);
     this.getFileContext = this.getFileContext.bind(this);
+    this.fileViewOpen = this.fileViewOpen.bind(this);
+    this.fileViewCloseBtn = this.fileViewCloseBtn.bind(this);
   }
 
   componentDidMount() {
@@ -29727,13 +29766,45 @@ class View extends React.Component {
         "fileName": e.target.className,
         "filePath": this.state.folderPath
       })
-    }).then(res => res.json()).then(result => {
-      this.setState({
-        file: result.fileContext,
-        folderList: result.folderList,
-        flag: result.flag
-      });
+    }).then(res => res.blob()).then(result => {
+      var reader = new FileReader();
+
+      if (result.type.indexOf("image/") !== -1) {
+        reader.onload = e => {
+          this.setState({
+            filecontent: e.target.result
+          });
+        };
+
+        reader.readAsDataURL(result);
+      } else {
+        reader.onload = e => {
+          let jsone = JSON.parse(e.currentTarget.result);
+          this.setState({
+            filecontent: jsone.filecontent,
+            filename: jsone.filename
+          });
+        };
+
+        reader.readAsText(result);
+      }
+
+      this.fileViewOpen();
     });
+  }
+
+  fileViewOpen() {
+    this.setState(prevState => ({
+      fileViewOpen: !prevState.fileViewOpen
+    }));
+  }
+
+  fileViewCloseBtn(e) {
+    this.setState(prevState => ({
+      fileViewOpen: !prevState.fileViewOpen,
+      filename: "",
+      filecontent: ""
+    }));
   }
 
   render() {
@@ -29760,7 +29831,9 @@ class View extends React.Component {
       makeFolder: this.handleMakeFolder,
       showDialog: this.showDialog,
       enter: this.handleInputEnter
-    }));
+    }), React.createElement(SawContent, _extends({}, this.state, {
+      fileCloseBtn: this.fileViewCloseBtn
+    })));
   }
 
 }
