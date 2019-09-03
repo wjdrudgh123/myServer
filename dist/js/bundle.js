@@ -29407,7 +29407,7 @@ class Folders extends React.Component {
           key: i,
           onClick: this.props.getFileContext
         }, React.createElement("img", {
-          src: "../img/txt.png",
+          src: "dist/img/txt.png",
           className: this.props.folderList[i]
         }), React.createElement("h5", {
           className: this.props.folderList[i]
@@ -29418,7 +29418,7 @@ class Folders extends React.Component {
           key: i,
           onClick: this.props.getFileContext
         }, React.createElement("img", {
-          src: "../img/image.png",
+          src: "dist/img/image.png",
           className: this.props.folderList[i]
         }), React.createElement("h5", {
           className: this.props.folderList[i]
@@ -29429,7 +29429,7 @@ class Folders extends React.Component {
           key: i,
           onClick: this.props.getFolder
         }, React.createElement("img", {
-          src: "../img/folder.png",
+          src: "dist/img/folder.png",
           className: this.props.folderList[i]
         }), React.createElement("h5", {
           className: this.props.folderList[i]
@@ -29443,7 +29443,7 @@ class Folders extends React.Component {
         key: "shift",
         onClick: this.props.getFolder
       }, React.createElement("img", {
-        src: "../img/folder.png",
+        src: "dist/img/folder.png",
         className: "back"
       }), React.createElement("h5", {
         className: "back"
@@ -29568,7 +29568,7 @@ const SawContent = props => {
   }, React.createElement("div", {
     id: "sawHeader"
   }, React.createElement("h3", null, props.filename), React.createElement("img", {
-    src: "../img/close.png",
+    src: "dist/img/close.png",
     onClick: props.fileCloseBtn
   })), React.createElement("div", {
     id: "sawContent"
