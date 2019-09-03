@@ -95,6 +95,5 @@ app.post("/getFileContext", (req, res)=>{
     }
 });
 
-app.listen(3000, ()=>{
-    console.log("hello");
+app.listen(process.env.PORT || 3000, ()=>{
 });
