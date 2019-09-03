@@ -29392,13 +29392,7 @@ class Folders extends React.Component {
   }
 
   render() {
-    let folders = []; // console.log(this.props.file)
-    // if(this.props.folderList.indexOf("context") !== -1){
-    //     folders.push(
-    //         <div className="file" key="file">
-    //             <h5 className={this.props.folderList}>{this.props.file}</h5>
-    //         </div>);
-    // }else{
+    let folders = [];
 
     for (let i = 0; i < this.props.folderList.length; i++) {
       if (this.props.folderList[i].indexOf("txt") !== -1) {
