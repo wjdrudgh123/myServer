@@ -29329,7 +29329,9 @@ class Content extends React.Component {
       folderList: this.props.folderList,
       flag: this.props.flag,
       getFolder: this.props.getFolderList,
-      getFileContext: this.props.getFileContext
+      getFileContext: this.props.getFileContext,
+      deleteModeOnOff: this.props.deleteModeOnOff,
+      selectDeleteFile: this.props.selectDeleteFile
     });
     return React.createElement("div", {
       id: "Content"
@@ -29393,40 +29395,55 @@ class Folders extends React.Component {
 
   render() {
     let folders = [];
+    let clickFileEvent;
+    let clickFolderEvent;
+    this.props.deleteModeOnOff ? clickFileEvent = this.props.selectDeleteFile : clickFileEvent = this.props.getFileContext;
+    this.props.deleteModeOnOff ? clickFolderEvent = this.props.selectDeleteFile : clickFolderEvent = this.props.getFolder;
 
     for (let i = 0; i < this.props.folderList.length; i++) {
       if (this.props.folderList[i].indexOf("txt") !== -1) {
         folders.push(React.createElement("div", {
           className: "folder",
           key: i,
-          onClick: this.props.getFileContext
+          onClick: clickFileEvent
         }, React.createElement("img", {
           src: "../img/txt.png",
-          className: this.props.folderList[i]
+          id: this.props.folderList[i]
         }), React.createElement("h5", {
-          className: this.props.folderList[i]
+          id: this.props.folderList[i]
         }, this.props.folderList[i])));
       } else if (this.props.folderList[i].indexOf("jpg") !== -1 || this.props.folderList[i].indexOf("png") !== -1 || this.props.folderList[i].indexOf("jpeg") !== -1) {
         folders.push(React.createElement("div", {
           className: "folder",
           key: i,
-          onClick: this.props.getFileContext
+          onClick: clickFileEvent
         }, React.createElement("img", {
           src: "../img/image.png",
-          className: this.props.folderList[i]
+          id: this.props.folderList[i]
         }), React.createElement("h5", {
-          className: this.props.folderList[i]
+          id: this.props.folderList[i]
+        }, this.props.folderList[i])));
+      } else if (this.props.folderList[i].indexOf("pdf") !== -1) {
+        folders.push(React.createElement("div", {
+          className: "folder",
+          key: i,
+          onClick: clickFileEvent
+        }, React.createElement("img", {
+          src: "../img/image.png",
+          id: this.props.folderList[i]
+        }), React.createElement("h5", {
+          id: this.props.folderList[i]
         }, this.props.folderList[i])));
       } else {
         folders.push(React.createElement("div", {
           className: "folder",
           key: i,
-          onClick: this.props.getFolder
+          onClick: clickFolderEvent
         }, React.createElement("img", {
           src: "../img/folder.png",
-          className: this.props.folderList[i]
+          id: this.props.folderList[i]
         }), React.createElement("h5", {
-          className: this.props.folderList[i]
+          id: this.props.folderList[i]
         }, this.props.folderList[i])));
       }
     }
@@ -29466,13 +29483,80 @@ const React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 
 const MenuButton = __webpack_require__(/*! ./menubutton.jsx */ "./src/jsx/menubutton.jsx");
 
-const Header = props => {
-  let header;
-  props.currentFolder === "" ? header = "My Cloud" : header = props.currentFolder;
-  return React.createElement("div", {
-    id: "header"
-  }, React.createElement(MenuButton, props), React.createElement("h1", null, header));
-};
+class Header extends React.Component {
+  constructor(props) {
+    super(props);
+    this.handleDeleteFile = this.handleDeleteFile.bind(this);
+  }
+
+  handleDeleteFile(e) {
+    let files = [];
+    let folders = [];
+
+    for (let i = 0; i < this.props.deleteFileList.length; i++) {
+      if (this.props.deleteFileList[i].match(/.jpeg/ig) !== null || this.props.deleteFileList[i].match(/.jpg/ig) !== null || this.props.deleteFileList[i].match(/.txt/ig) !== null || this.props.deleteFileList[i].match(/.png/ig) !== null || this.props.deleteFileList[i].match(/.pdf/ig) !== null) {
+        files.push(this.props.deleteFileList[i]);
+      } else {
+        folders.push(this.props.deleteFileList[i]);
+      }
+    }
+
+    if (prompt("삭제스??") !== null) {
+      let sendValue = {
+        "value": {
+          "path": this.props.folderPath,
+          "files": files,
+          "folders": folders
+        }
+      };
+      fetch("/delete", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(sendValue)
+      }).then(res => res.text()).then(result => {
+        if (result === "ENOTEMPTY") {
+          alert("폴더를 비워주세요");
+          this.props.delModeOnOff();
+        } else if (result === "success") {
+          this.props.getList();
+          this.props.delModeOnOff(); //getElementsByClassName은 하나의 돔 오브젝트 리턴이 아닌 여러개를 리턴하므로 하나씩 루프 돌려가면서 바꿔야 됨.
+
+          for (let i = 0; i < document.getElementsByClassName("folder").length; i++) {
+            document.getElementsByClassName("folder")[i].style.background = "white";
+          }
+        }
+      });
+    }
+  }
+
+  render() {
+    let header;
+
+    if (this.props.currentFolder === "" && this.props.deleteModeOnOff === false) {
+      header = React.createElement("h1", null, "My Cloud");
+    } else if (this.props.deleteModeOnOff === true) {
+      let img;
+      let imgClickMethod;
+      this.props.deleteFileList.length === 0 ? img = "home" : img = "trashcan";
+      img === "home" ? imgClickMethod = this.props.delModeOnOff : imgClickMethod = this.handleDeleteFile;
+      header = React.createElement("div", {
+        className: "deleteMode"
+      }, React.createElement("h1", null, "선택항목 " + this.props.deleteFileList.length), React.createElement("img", {
+        src: "../img/" + img + ".png",
+        onClick: imgClickMethod
+      }));
+    } else {
+      header = React.createElement("h1", null, this.props.currentFolder);
+    }
+
+    return React.createElement("div", {
+      id: "header"
+    }, React.createElement(MenuButton, this.props), header);
+  }
+
+}
 
 module.exports = Header;
 
@@ -29487,29 +29571,38 @@ module.exports = Header;
 
 const React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 
-const Menu = props => {
-  let onOff;
-  props.onOff ? onOff = "on" : onOff = "off";
-  return React.createElement("div", {
-    className: "menu " + onOff
-  }, React.createElement("div", {
-    id: "makeFolder"
-  }, React.createElement("h3", {
-    onClick: props.showDialog
-  }, "\uD3F4\uB354\uB9CC\uB4E4\uAE30")), React.createElement("div", {
-    id: "uploadFile"
-  }, React.createElement("input", {
-    type: "file",
-    id: "file",
-    name: "upload",
-    hidden: true,
-    onChange: props.selectFile
-  }), React.createElement("h3", {
-    onClick: props.clickUpload
-  }, "\uD30C\uC77C\uC62C\uB9AC\uAE30")), React.createElement("div", {
-    id: "deleteFile"
-  }, React.createElement("h3", null, "\uC0AD\uC81C")));
-};
+class Menu extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    let menuOnOff;
+    this.props.onOff ? menuOnOff = "menuOn" : menuOnOff = "menuOff";
+    return React.createElement("div", {
+      className: "menu " + menuOnOff
+    }, React.createElement("div", {
+      id: "makeFolder"
+    }, React.createElement("h3", {
+      onClick: this.props.showDialog
+    }, "\uD3F4\uB354\uB9CC\uB4E4\uAE30")), React.createElement("div", {
+      id: "uploadFile"
+    }, React.createElement("input", {
+      type: "file",
+      id: "file",
+      name: "upload",
+      hidden: true,
+      onChange: this.props.selectFile
+    }), React.createElement("h3", {
+      onClick: this.props.clickUpload
+    }, "\uD30C\uC77C\uC62C\uB9AC\uAE30")), React.createElement("div", {
+      id: "deleteFile"
+    }, React.createElement("h3", {
+      onClick: this.props.deleteMode
+    }, "\uC0AD\uC81C")));
+  }
+
+}
 
 module.exports = Menu;
 
@@ -29550,10 +29643,14 @@ const SawContent = props => {
   props.fileViewOpen ? state = "viewOpen" : state = "viewClose";
 
   if (props.filename.indexOf(".txt") !== -1) {
-    data = React.createElement("h3", null, props.filecontent);
+    data = React.createElement("h3", {
+      height: "100%"
+    }, props.filecontent);
   } else {
     data = React.createElement("img", {
-      src: props.filecontent
+      src: props.filecontent,
+      width: "100%",
+      height: "90%"
     });
   }
 
@@ -29608,7 +29705,9 @@ class View extends React.Component {
       folderPath: "",
       filecontent: "",
       filename: "",
-      fileViewOpen: false
+      fileViewOpen: false,
+      deleteFileList: [],
+      deleteModeOnOff: false
     };
     this.getFolderList = this.getFolderList.bind(this);
     this.inputFolderName = this.inputFolderName.bind(this);
@@ -29621,6 +29720,8 @@ class View extends React.Component {
     this.getFileContext = this.getFileContext.bind(this);
     this.fileViewOpen = this.fileViewOpen.bind(this);
     this.fileViewCloseBtn = this.fileViewCloseBtn.bind(this);
+    this.handleDeleteFileSelect = this.handleDeleteFileSelect.bind(this);
+    this.handleDeleteMode = this.handleDeleteMode.bind(this);
   }
 
   componentDidMount() {
@@ -29648,10 +29749,10 @@ class View extends React.Component {
       folder = avertPath;
     } else {
       this.setState({
-        currentFolder: e.target.className,
-        folderPath: this.state.folderPath + "/" + e.target.className
+        currentFolder: e.target.id,
+        folderPath: this.state.folderPath + "/" + e.target.id
       });
-      folder = e.target.className;
+      folder = e.target.id;
     }
 
     fetch("/getFolderList", {
@@ -29757,7 +29858,7 @@ class View extends React.Component {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        "fileName": e.target.className,
+        "fileName": e.target.id,
         "filePath": this.state.folderPath
       })
     }).then(res => res.blob()).then(result => {
@@ -29801,6 +29902,34 @@ class View extends React.Component {
     }));
   }
 
+  handleDeleteFileSelect(e) {
+    let files = this.state.deleteFileList;
+
+    if (files.indexOf(e.target.id) === -1) {
+      files.push(e.target.id);
+      document.getElementById(e.target.id).parentElement.style.background = "#ecf0f1";
+    } else {
+      files.splice(files.indexOf(e.target.id), 1); // 배열에서 특정 값을 찾아 삭제하는 것
+
+      document.getElementById(e.target.id).parentElement.style.background = "white";
+    }
+
+    this.setState({
+      deleteFileList: files
+    });
+  }
+
+  handleDeleteMode() {
+    this.setState(prevState => ({
+      deleteModeOnOff: !prevState.deleteModeOnOff,
+      deleteFileList: []
+    }));
+
+    if (this.state.isMenuToggled !== false) {
+      this.handleClickMenuBtn();
+    }
+  }
+
   render() {
     let dialogSH;
     this.state.isDialogToggled ? dialogSH = "s" : dialogSH = "h";
@@ -29808,16 +29937,20 @@ class View extends React.Component {
       id: "view",
       className: dialogSH
     }, React.createElement(Header, _extends({}, this.state, {
-      clickBtn: this.handleClickMenuBtn
+      getList: this.getFolderList,
+      clickBtn: this.handleClickMenuBtn,
+      delModeOnOff: this.handleDeleteMode
     })), React.createElement(Menu, {
       onOff: this.state.isMenuToggled,
+      deleteMode: this.handleDeleteMode,
       showDialog: this.showDialog,
       clickUpload: this.handleUploadBtnClick,
       selectFile: this.handleSelectedFile
     }), React.createElement(Content, _extends({}, this.state, {
       getFolderList: this.getFolderList,
       showDialog: this.showDialog,
-      getFileContext: this.getFileContext
+      getFileContext: this.getFileContext,
+      selectDeleteFile: this.handleDeleteFileSelect
     })), React.createElement(Dialog, {
       showHidden: this.state.isDialogToggled,
       foldername: this.state.foldername,
