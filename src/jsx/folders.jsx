@@ -23,7 +23,7 @@ class Folders extends React.Component{
                         <img src="../img/image.png" id={this.props.folderList[i]}/>
                         <h5 id={this.props.folderList[i]}>{this.props.folderList[i]}</h5>
                     </div>);
-            }else if(this.props.folderList[i].indexOf("pdf") !== -1){
+            }else if(this.props.folderList[i].match(/pdf/ig) !== null){
                 folders.push(
                     <div className="folder" key={i} onClick={clickFileEvent}>
                         <img src="../img/image.png" id={this.props.folderList[i]}/>
