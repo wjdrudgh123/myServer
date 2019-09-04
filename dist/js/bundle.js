@@ -29647,11 +29647,12 @@ const SawContent = props => {
       height: "100%"
     }, props.filecontent);
   } else {
-    data = React.createElement("img", {
+    data = React.createElement("embed", {
       src: props.filecontent,
+      type: "application/pdf",
       width: "100%",
       height: "90%"
-    });
+    }); // data = <img src={props.filecontent} width="100%" height="90%"/>
   }
 
   return React.createElement("div", {
@@ -29866,6 +29867,15 @@ class View extends React.Component {
 
       if (result.type.indexOf("image/") !== -1) {
         reader.onload = e => {
+          this.setState({
+            filecontent: e.target.result
+          });
+        };
+
+        reader.readAsDataURL(result);
+      } else if (result.type.match(/.pdf/ig) !== null) {
+        reader.onload = e => {
+          console.log(e.target);
           this.setState({
             filecontent: e.target.result
           });

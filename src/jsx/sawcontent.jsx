@@ -7,7 +7,8 @@ const SawContent = (props) => {
     if(props.filename.indexOf(".txt") !== -1){
         data = <h3 height="100%">{props.filecontent}</h3>
     }else{
-        data = <img src={props.filecontent} width="100%" height="90%"/>
+        data = <embed src={props.filecontent} type="application/pdf" width="100%" height="90%" />
+        // data = <img src={props.filecontent} width="100%" height="90%"/>
     }
     return(
         <div className={"sawView "+state}>

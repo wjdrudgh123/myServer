@@ -2,7 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const fs = require("fs");
 const formidable = require("formidable");
-const PDFParser = require("./node_modules/pdfreader/PdfReader");
+
 
 const app = express();
 
@@ -86,14 +86,14 @@ app.post("/getFileContext", (req, res)=>{
             res.end();
         });
     }else if(req.body.fileName.match(/.pdf/gi) !== null){
-        var raw = {};
-        let pdfBuffer = fs.readFileSync(path);
-        new PDFParser().parseBuffer(pdfBuffer, function(err, item) {
-            if (err) callback(err);
-            else if (!item) console.log(item.page);
-            else if (item.text) (rows[item.y] = rows[item.y] || []).push(item.text);
-          });
-    }else{
+        fs.readFile(path, (err, data)=>{
+            res.writeHead(200,{
+                "Content-Type":"application/pdf"});
+            res.write(data)
+            res.end();
+        });
+    }
+    else{
         fs.readFile(path, "utf8",(err, data)=>{
             res.send(JSON.stringify({
             "filename":req.body.fileName,

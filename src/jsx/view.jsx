@@ -167,6 +167,15 @@ class View extends React.Component{
                     })
                 }
                 reader.readAsDataURL(result);
+            }else if(result.type.match(/.pdf/ig) !== null){
+                reader.onload = (e) =>{
+                    console.log(e.target)
+                    this.setState({
+                        filecontent:e.target.result
+                    })
+
+                }
+                reader.readAsDataURL(result);
             }else{
                 reader.onload = (e) =>{
                     let jsone = JSON.parse(e.currentTarget.result);
