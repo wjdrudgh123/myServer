@@ -115,9 +115,10 @@ app.post("/getFileContext", (req, res)=>{
     }
     else{
         fs.readFile(path, "utf8",(err, data)=>{
+            let content = data.split("\n");
             res.send(JSON.stringify({
             "filename":req.body.fileName,
-            "filecontent":data
+            "filecontent":content
             }));
             res.end();
         });
