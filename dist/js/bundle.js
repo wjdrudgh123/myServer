@@ -29423,7 +29423,7 @@ class Folders extends React.Component {
         }), React.createElement("h5", {
           id: this.props.folderList[i]
         }, this.props.folderList[i])));
-      } else if (this.props.folderList[i].indexOf("pdf") !== -1) {
+      } else if (this.props.folderList[i].match(/pdf/ig) !== null) {
         folders.push(React.createElement("div", {
           className: "folder",
           key: i,
@@ -29642,10 +29642,13 @@ const SawContent = props => {
   let data;
   props.fileViewOpen ? state = "viewOpen" : state = "viewClose";
 
-  if (props.filename.indexOf(".txt") !== -1) {
+  if (props.filename.match(/txt/ig) !== null || props.filename.match(/pdf/ig) !== null) {
+    let content = props.filecontent.map((c, i) => React.createElement("p", {
+      key: i
+    }, c));
     data = React.createElement("h3", {
       height: "100%"
-    }, props.filecontent);
+    }, content);
   } else {
     data = React.createElement("img", {
       src: props.filecontent,
@@ -29872,6 +29875,16 @@ class View extends React.Component {
         };
 
         reader.readAsDataURL(result);
+      } else if (result.type.match(/.pdf/ig) !== null) {
+        reader.onload = e => {
+          let jsone = JSON.parse(e.currentTarget.result);
+          this.setState({
+            filecontent: jsone.filecontent,
+            filename: jsone.filename
+          });
+        };
+
+        reader.readAsText(result);
       } else {
         reader.onload = e => {
           let jsone = JSON.parse(e.currentTarget.result);

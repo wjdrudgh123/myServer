@@ -2,7 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const fs = require("fs");
 const formidable = require("formidable");
-const PDFParser = require("./node_modules/pdfreader/PdfReader");
+const PdfReader = require("pdfreader").PdfReader;
 
 const app = express();
 
@@ -75,6 +75,8 @@ app.post("/uploadFile", (req, res)=>{
     });
 });
 
+
+
 app.post("/getFileContext", (req, res)=>{
     let path = __dirname+"/materials"+req.body.filePath+"/"+req.body.fileName;
     if(req.body.fileName.match(/.png/ig) !== null || req.body.fileName.match(/.jpeg/ig) !== null || req.body.fileName.match(/.jpg/ig) !== null){
@@ -87,13 +89,31 @@ app.post("/getFileContext", (req, res)=>{
         });
     }else if(req.body.fileName.match(/.pdf/gi) !== null){
         var raw = {};
-        let pdfBuffer = fs.readFileSync(path);
-        new PDFParser().parseBuffer(pdfBuffer, function(err, item) {
-            if (err) callback(err);
-            else if (!item) console.log(item.page);
-            else if (item.text) (rows[item.y] = rows[item.y] || []).push(item.text);
-          });
-    }else{
+        var data = [];
+        fs.readFile(path, (err, pdfBuffer) => {
+            new PdfReader().parseBuffer(pdfBuffer, function(err, item) {
+                if (err) callback(err);
+                else if (!item || item.page){
+                    Object.keys(raw).sort((y1, y2)=>parseFloat(y1) - parseFloat(y2)).forEach(y => {
+                        data.push((raw[y] || []).join(""));
+                    });
+                    raw = {};
+                    if(data.length !== 0){
+                        res.setHeader("Content-Type","application/pdf")
+                        res.send(JSON.stringify({
+                            "filecontent":data,
+                            "filename":req.body.fileName
+                        }));
+                        res.end();
+                    }
+                }
+                else if (item.text) {
+                    (raw[item.y] = raw[item.y] || []).push(item.text);
+                }
+            });
+        });
+    }
+    else{
         fs.readFile(path, "utf8",(err, data)=>{
             res.send(JSON.stringify({
             "filename":req.body.fileName,
