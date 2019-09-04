@@ -19,7 +19,9 @@ class View extends React.Component{
             folderPath:"",
             filecontent:"",
             filename:"",
-            fileViewOpen:false
+            fileViewOpen:false,
+            deleteFileList:[],
+            deleteModeOnOff:false
         }
         this.getFolderList = this.getFolderList.bind(this);
         this.inputFolderName = this.inputFolderName.bind(this);
@@ -32,6 +34,8 @@ class View extends React.Component{
         this.getFileContext = this.getFileContext.bind(this);
         this.fileViewOpen = this.fileViewOpen.bind(this);
         this.fileViewCloseBtn = this.fileViewCloseBtn.bind(this);
+        this.handleDeleteFileSelect = this.handleDeleteFileSelect.bind(this);
+        this.handleDeleteMode = this.handleDeleteMode.bind(this);
     }
     componentDidMount(){
         this.getFolderList();
@@ -54,10 +58,10 @@ class View extends React.Component{
             folder = avertPath;
         }else{
             this.setState({
-                currentFolder:e.target.className,
-                folderPath:this.state.folderPath+"/"+e.target.className
+                currentFolder:e.target.id,
+                folderPath:this.state.folderPath+"/"+e.target.id
             });
-            folder = e.target.className;
+            folder = e.target.id;
         }
         fetch("/getFolderList",
             {
@@ -151,7 +155,7 @@ class View extends React.Component{
                 "Content-Type":"application/json"
             },
             body:JSON.stringify({
-                "fileName":e.target.className,
+                "fileName":e.target.id,
                 "filePath":this.state.folderPath
             })
         }).then((res)=>res.blob()).then((result)=>{
@@ -188,14 +192,38 @@ class View extends React.Component{
             filecontent:""
         }));
     }
+
+    handleDeleteFileSelect(e){
+        let files = this.state.deleteFileList;
+        if(files.indexOf(e.target.id) === -1){
+            files.push(e.target.id);
+            document.getElementById(e.target.id).parentElement.style.background = "#ecf0f1";
+        }else{
+            files.splice(files.indexOf(e.target.id),1); // 배열에서 특정 값을 찾아 삭제하는 것
+            document.getElementById(e.target.id).parentElement.style.background = "white";
+        }
+        this.setState({
+            deleteFileList:files
+        });
+    }
+    handleDeleteMode(){
+        this.setState(prevState => ({
+            deleteModeOnOff:!prevState.deleteModeOnOff,
+            deleteFileList:[]
+        }));
+        if(this.state.isMenuToggled !== false){
+            this.handleClickMenuBtn();
+        }
+    }
     render(){
         let dialogSH;
         this.state.isDialogToggled ? dialogSH = "s" : dialogSH = "h";
         return (
             <div id="view" className={dialogSH}>
-                <Header {...this.state} clickBtn = {this.handleClickMenuBtn}/>
-                <Menu onOff={this.state.isMenuToggled} showDialog = {this.showDialog} clickUpload = {this.handleUploadBtnClick} selectFile = {this.handleSelectedFile}/>
-                <Content {...this.state} getFolderList={this.getFolderList} showDialog = {this.showDialog} getFileContext={this.getFileContext}/>
+                <Header {...this.state} getList = {this.getFolderList} clickBtn = {this.handleClickMenuBtn} delModeOnOff={this.handleDeleteMode}/>
+                <Menu onOff={this.state.isMenuToggled} deleteMode={this.handleDeleteMode} showDialog = {this.showDialog} clickUpload = {this.handleUploadBtnClick} selectFile = {this.handleSelectedFile}/>
+                <Content {...this.state} getFolderList={this.getFolderList} showDialog = {this.showDialog} getFileContext={this.getFileContext}
+                            selectDeleteFile={this.handleDeleteFileSelect}/>
                 <Dialog showHidden = {this.state.isDialogToggled} foldername = {this.state.foldername} inputFolderName = {this.inputFolderName} makeFolder = {this.handleMakeFolder}
                         showDialog = {this.showDialog} enter = {this.handleInputEnter}/>
                 <SawContent {...this.state} fileCloseBtn={this.fileViewCloseBtn}/>

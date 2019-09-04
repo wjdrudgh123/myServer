@@ -104,4 +104,29 @@ app.post("/getFileContext", (req, res)=>{
     }
 });
 
+app.post("/delete", (req, res)=>{
+    let path = __dirname+"/materials"+req.body.value.path;
+    if(req.body.value.files.length !== 0){
+        for(let i = 0; i < req.body.value.files.length; i++){
+            fs.unlink(path+"/"+req.body.value.files[i], (err)=>{
+                if(err) throw err;
+                res.send("success");
+            })
+
+        }
+    }else if(req.body.value.folders.length !== 0){
+        for(let i = 0; i < req.body.value.folders.length; i++){
+            fs.rmdir(path+"/"+req.body.value.folders[i], (err)=>{
+                if(err){
+                    res.send(err.code);
+                }else{
+                    res.send("success");
+                }
+            })
+
+        }
+    }
+
+});
+
 app.listen(process.env.PORT || 3000);
