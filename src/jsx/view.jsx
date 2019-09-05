@@ -149,13 +149,14 @@ class View extends React.Component{
         });
     }
     getFileContext(e){
+        var targetFilename = e.target.id;
         fetch("/getFileContext", {
             method:"POST",
             headers:{
                 "Content-Type":"application/json"
             },
             body:JSON.stringify({
-                "fileName":e.target.id,
+                "fileName":targetFilename,
                 "filePath":this.state.folderPath
             })
         }).then((res)=>res.blob()).then((result)=>{
@@ -171,10 +172,7 @@ class View extends React.Component{
             else if(result.type.match(/.pdf/ig) !== null){
                 reader.onload = (e) =>{
                     let jsone = JSON.parse(e.currentTarget.result);
-                    this.setState({
-                        filecontent:jsone.filecontent,
-                        filename:jsone.filename
-                    });
+                    this.handleGetPDF(jsone, targetFilename);
                 }
                 reader.readAsText(result);
             }
@@ -190,6 +188,22 @@ class View extends React.Component{
             }
             this.fileViewOpen();
         });
+    }
+
+    handleGetPDF(jsone, f){
+        fetch("/getPDFIMG", {
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({
+                "j":jsone,
+                "filename":f
+            })
+        }).then((res)=>res.json()).then((result)=>{
+            this.setState({
+                filecontent:result.json,
+                filename:result.filename
+            });
+        })
     }
     fileViewOpen(){
         this.setState(prevState => ({

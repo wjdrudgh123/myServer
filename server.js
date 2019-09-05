@@ -2,7 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const fs = require("fs");
 const formidable = require("formidable");
-const PdfReader = require("pdfreader").PdfReader;
+const PDF2Pic = require("pdf2pic");
 
 const app = express();
 
@@ -75,8 +75,6 @@ app.post("/uploadFile", (req, res)=>{
     });
 });
 
-
-
 app.post("/getFileContext", (req, res)=>{
     let path = __dirname+"/materials"+req.body.filePath+"/"+req.body.fileName;
     if(req.body.fileName.match(/.png/ig) !== null || req.body.fileName.match(/.jpeg/ig) !== null || req.body.fileName.match(/.jpg/ig) !== null){
@@ -88,28 +86,19 @@ app.post("/getFileContext", (req, res)=>{
             res.end();
         });
     }else if(req.body.fileName.match(/.pdf/gi) !== null){
-        var raw = {};
-        var data = [];
-        fs.readFile(path, (err, pdfBuffer) => {
-            new PdfReader().parseBuffer(pdfBuffer, function(err, item) {
-                if (err) callback(err);
-                else if (!item || item.page){
-                    Object.keys(raw).sort((y1, y2)=>parseFloat(y1) - parseFloat(y2)).forEach(y => {
-                        data.push((raw[y] || []).join(""));
-                    });
-                    raw = {};
-                    if(item === undefined){
-                        res.setHeader("Content-Type","application/pdf")
-                        res.send(JSON.stringify({
-                                "filecontent":data,
-                                "filename":req.body.fileName
-                            }));
-                            res.end();
-                        }
-                    }
-                    else if (item.text) {
-                        (raw[item.y] = raw[item.y] || []).push(item.text);
-                    }
+        
+        fs.readFile(path, (err, data) => {
+            const pdf2pic = new PDF2Pic({
+                density: 100,           // output pixels per inch
+                savename: "untitled",   // output file name
+                savedir: __dirname+"/dist/img/tempimg/",    // output file location
+                format: "png",          // output file format
+                size: "600x600"         // output size in pixels
+            });
+               
+            pdf2pic.convertBulk(path, -1).then((resolve) => {
+                res.setHeader("Content-Type","application/pdf");
+                res.send(resolve);
             });
         });
     }
@@ -123,6 +112,14 @@ app.post("/getFileContext", (req, res)=>{
             res.end();
         });
     }
+});
+
+app.post("/getPDFIMG", (req,res) => {
+    var pdfimg = [];
+    for(let i = 0; i < req.body.j.length; i++){
+        pdfimg.push(fs.readFileSync(req.body.j[i].path, "base64"));
+    }
+    res.send(JSON.stringify({"json":pdfimg, "filename":req.body.filename}));
 });
 
 app.post("/delete", (req, res)=>{
