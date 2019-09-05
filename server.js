@@ -98,18 +98,18 @@ app.post("/getFileContext", (req, res)=>{
                         data.push((raw[y] || []).join(""));
                     });
                     raw = {};
-                    if(data.length !== 0){
+                    if(item === undefined){
                         res.setHeader("Content-Type","application/pdf")
                         res.send(JSON.stringify({
-                            "filecontent":data,
-                            "filename":req.body.fileName
-                        }));
-                        res.end();
+                                "filecontent":data,
+                                "filename":req.body.fileName
+                            }));
+                            res.end();
+                        }
                     }
-                }
-                else if (item.text) {
-                    (raw[item.y] = raw[item.y] || []).push(item.text);
-                }
+                    else if (item.text) {
+                        (raw[item.y] = raw[item.y] || []).push(item.text);
+                    }
             });
         });
     }
@@ -117,8 +117,8 @@ app.post("/getFileContext", (req, res)=>{
         fs.readFile(path, "utf8",(err, data)=>{
             let content = data.split("\n");
             res.send(JSON.stringify({
-            "filename":req.body.fileName,
-            "filecontent":content
+                "filename":req.body.fileName,
+                "filecontent":content
             }));
             res.end();
         });
