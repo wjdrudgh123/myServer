@@ -150,6 +150,7 @@ class View extends React.Component{
     }
     getFileContext(e){
         var targetFilename = e.target.id;
+        this.fileViewOpen();
         fetch("/getFileContext", {
             method:"POST",
             headers:{
@@ -186,7 +187,6 @@ class View extends React.Component{
                 }
                 reader.readAsText(result);
             }
-            this.fileViewOpen();
         });
     }
 

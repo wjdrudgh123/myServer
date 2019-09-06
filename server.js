@@ -89,11 +89,11 @@ app.post("/getFileContext", (req, res)=>{
         
         fs.readFile(path, (err, data) => {
             const pdf2pic = new PDF2Pic({
-                density: 100,           // output pixels per inch
+                density: 200,           // output pixels per inch
                 savename: "untitled",   // output file name
                 savedir: __dirname+"/dist/img/tempimg/",    // output file location
                 format: "png",          // output file format
-                size: "600x600"         // output size in pixels
+                size: "1024x764"         // output size in pixels
             });
                
             pdf2pic.convertBulk(path, -1).then((resolve) => {
@@ -118,6 +118,11 @@ app.post("/getPDFIMG", (req,res) => {
     var pdfimg = [];
     for(let i = 0; i < req.body.j.length; i++){
         pdfimg.push(fs.readFileSync(req.body.j[i].path, "base64"));
+    }
+    for(let i = 0; i < req.body.j.length; i++){
+        fs.unlink(req.body.j[i].path, (err) => {
+            if(err) throw err;
+        });
     }
     res.send(JSON.stringify({"json":pdfimg, "filename":req.body.filename}));
 });

@@ -29412,7 +29412,7 @@ class Folders extends React.Component {
         }), React.createElement("h5", {
           id: this.props.folderList[i]
         }, this.props.folderList[i])));
-      } else if (this.props.folderList[i].indexOf("jpg") !== -1 || this.props.folderList[i].indexOf("png") !== -1 || this.props.folderList[i].indexOf("jpeg") !== -1) {
+      } else if (this.props.folderList[i].indexOf("jpg") !== -1 || this.props.folderList[i].indexOf("png") !== -1 || this.props.folderList[i].indexOf("jpeg") !== -1 || this.props.folderList[i].match(/.gif/ig !== null)) {
         folders.push(React.createElement("div", {
           className: "folder",
           key: i,
@@ -29658,12 +29658,14 @@ const SawContent = props => {
       height: "90%"
     })));
     data = content;
-  } else {
+  } else if (props.filename.match(/.png/ig) !== null || props.filename.match(/.jpg/ig) !== null || props.filename.match(/.jpeg/ig) !== null || props.filename.match(/.gif/ig) !== null) {
     data = React.createElement("img", {
       src: props.filecontent,
       width: "100%",
       height: "90%"
     });
+  } else {
+    data = React.createElement("h3", null, "\uD30C\uC77C\uC744 \uC77D\uB294 \uC911\uC785\uB2C8\uB2E4...");
   }
 
   return React.createElement("div", {
@@ -29865,6 +29867,7 @@ class View extends React.Component {
 
   getFileContext(e) {
     var targetFilename = e.target.id;
+    this.fileViewOpen();
     fetch("/getFileContext", {
       method: "POST",
       headers: {
@@ -29903,8 +29906,6 @@ class View extends React.Component {
 
         reader.readAsText(result);
       }
-
-      this.fileViewOpen();
     });
   }
 
