@@ -18,7 +18,7 @@ class Header extends React.Component{
                     folders.push(this.props.deleteFileList[i]);
                 }
         }
-        if(prompt("삭제스??") !== null){
+        if(confirm("삭제스??") !== false){
             let sendValue = {
                 "value":{
                     "path":this.props.folderPath,

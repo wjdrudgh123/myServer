@@ -29501,7 +29501,7 @@ class Header extends React.Component {
       }
     }
 
-    if (prompt("삭제스??") !== null) {
+    if (confirm("삭제스??") !== false) {
       let sendValue = {
         "value": {
           "path": this.props.folderPath,
