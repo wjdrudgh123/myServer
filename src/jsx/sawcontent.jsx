@@ -16,9 +16,11 @@ const SawContent = (props) => {
             </div>
         )
         data = content;
-    }
-    else{
+    }else if(props.filename.match(/.png/ig) !== null || props.filename.match(/.jpg/ig) !== null || props.filename.match(/.jpeg/ig) !== null
+    || props.filename.match(/.gif/ig) !== null){
         data = <img src={props.filecontent} width="100%" height="90%"/>
+    }else{
+        data = <h3>파일을 읽는 중입니다...</h3>;
     }
     return(
         <div className={"sawView "+state}>
