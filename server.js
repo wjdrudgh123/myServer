@@ -78,13 +78,11 @@ app.post("/uploadFile", (req, res)=>{
 app.post("/getFileContext", (req, res)=>{
     let path = __dirname+"/materials"+req.body.filePath+"/"+req.body.fileName;
     if(req.body.fileName.match(/.png/ig) !== null || req.body.fileName.match(/.jpeg/ig) !== null || req.body.fileName.match(/.jpg/ig) !== null){
-        fs.readFile(path, (err, data)=>{
-            res.writeHead(200, {
-                "Content-Type":"image/"+req.body.fileName.split(".")[req.body.fileName.split(".").length-1]
-            });
-            res.write(data);
-            res.end();
-        });
+        res.setHeader("Content-Type","image/"+req.body.fileName.split(".")[req.body.fileName.split(".").length-1]);
+        res.send(JSON.stringify({
+            "filecontent":path,
+            "filename":req.body.fileName
+        }));
     }else if(req.body.fileName.match(/.pdf/gi) !== null){
         
         fs.readFile(path, (err, data) => {
@@ -112,6 +110,11 @@ app.post("/getFileContext", (req, res)=>{
             res.end();
         });
     }
+});
+app.post("/getIMG", (req,res) => {
+    var img = [];
+    img.push(fs.readFileSync(req.body.j, "base64"));
+    res.send(JSON.stringify({"json":img, "filename":req.body.filename}));
 });
 
 app.post("/getPDFIMG", (req,res) => {

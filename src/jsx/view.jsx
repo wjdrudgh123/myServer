@@ -36,6 +36,7 @@ class View extends React.Component{
         this.fileViewCloseBtn = this.fileViewCloseBtn.bind(this);
         this.handleDeleteFileSelect = this.handleDeleteFileSelect.bind(this);
         this.handleDeleteMode = this.handleDeleteMode.bind(this);
+        this.handleGetIMG = this.handleGetIMG.bind(this)
     }
     componentDidMount(){
         this.getFolderList();
@@ -163,12 +164,11 @@ class View extends React.Component{
         }).then((res)=>res.blob()).then((result)=>{
             var reader = new FileReader();
             if(result.type.indexOf("image/") !== -1){
-                reader.onload = (e) => {
-                    this.setState({
-                        filecontent:e.target.result
-                    })
+                reader.onload = (e) =>{
+                    let jsone = JSON.parse(e.currentTarget.result);
+                    this.handleGetIMG(jsone.filecontent, jsone.filename);
                 }
-                reader.readAsDataURL(result);
+                reader.readAsText(result);
             }
             else if(result.type.match(/.pdf/ig) !== null){
                 reader.onload = (e) =>{
@@ -189,7 +189,21 @@ class View extends React.Component{
             }
         });
     }
-
+    handleGetIMG(jsone, f){
+        fetch("/getIMG", {
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({
+                "j":jsone,
+                "filename":f
+            })
+        }).then((res)=>res.json()).then((result)=>{
+            this.setState({
+                filecontent:result.json,
+                filename:result.filename
+            });
+        })
+    }
     handleGetPDF(jsone, f){
         fetch("/getPDFIMG", {
             method:"POST",
