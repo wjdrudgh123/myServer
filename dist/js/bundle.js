@@ -29660,7 +29660,7 @@ const SawContent = props => {
     data = content;
   } else if (props.filename.match(/.png/ig) !== null || props.filename.match(/.jpg/ig) !== null || props.filename.match(/.jpeg/ig) !== null || props.filename.match(/.gif/ig) !== null) {
     data = React.createElement("img", {
-      src: props.filecontent,
+      src: "data:image/" + props.filename.split(".")[1] + ";base64," + props.filecontent,
       width: "100%",
       height: "90%"
     });
@@ -29736,6 +29736,7 @@ class View extends React.Component {
     this.fileViewCloseBtn = this.fileViewCloseBtn.bind(this);
     this.handleDeleteFileSelect = this.handleDeleteFileSelect.bind(this);
     this.handleDeleteMode = this.handleDeleteMode.bind(this);
+    this.handleGetIMG = this.handleGetIMG.bind(this);
   }
 
   componentDidMount() {
@@ -29882,12 +29883,11 @@ class View extends React.Component {
 
       if (result.type.indexOf("image/") !== -1) {
         reader.onload = e => {
-          this.setState({
-            filecontent: e.target.result
-          });
+          let jsone = JSON.parse(e.currentTarget.result);
+          this.handleGetIMG(jsone.filecontent, jsone.filename);
         };
 
-        reader.readAsDataURL(result);
+        reader.readAsText(result);
       } else if (result.type.match(/.pdf/ig) !== null) {
         reader.onload = e => {
           let jsone = JSON.parse(e.currentTarget.result);
@@ -29906,6 +29906,24 @@ class View extends React.Component {
 
         reader.readAsText(result);
       }
+    });
+  }
+
+  handleGetIMG(jsone, f) {
+    fetch("/getIMG", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        "j": jsone,
+        "filename": f
+      })
+    }).then(res => res.json()).then(result => {
+      this.setState({
+        filecontent: result.json,
+        filename: result.filename
+      });
     });
   }
 
