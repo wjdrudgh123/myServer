@@ -74,7 +74,6 @@ app.post("/uploadFile", (req, res)=>{
         });
     });
 });
-
 app.post("/getFileContext", (req, res)=>{
     let path = __dirname+"/materials"+req.body.filePath+"/"+req.body.fileName;
     if(req.body.fileName.match(/.png/ig) !== null || req.body.fileName.match(/.jpeg/ig) !== null || req.body.fileName.match(/.jpg/ig) !== null){
@@ -84,16 +83,18 @@ app.post("/getFileContext", (req, res)=>{
             "filename":req.body.fileName
         }));
     }else if(req.body.fileName.match(/.pdf/gi) !== null){
-        
+        let screenSize = "1300x1300";
+        if(req.body.screenSize < 512){
+            screenSize = "300x300"
+        }
         fs.readFile(path, (err, data) => {
             const pdf2pic = new PDF2Pic({
-                density: 200,           // output pixels per inch
+                density: 500,           // output pixels per inch
                 savename: "untitled",   // output file name
                 savedir: __dirname+"/dist/img/tempimg/",    // output file location
                 format: "png",          // output file format
-                size: "1024x764"         // output size in pixels
+                size: screenSize         // output size in pixels
             });
-               
             pdf2pic.convertBulk(path, -1).then((resolve) => {
                 res.setHeader("Content-Type","application/pdf");
                 res.send(resolve);

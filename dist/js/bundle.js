@@ -29653,9 +29653,7 @@ const SawContent = props => {
     let content = props.filecontent.map((c, i) => React.createElement("div", {
       key: i
     }, React.createElement("img", {
-      src: "data:image/png;base64," + c,
-      width: "100%",
-      height: "90%"
+      src: "data:image/png;base64," + c
     })));
     data = content;
   } else if (props.filename.match(/.png/ig) !== null || props.filename.match(/.jpg/ig) !== null || props.filename.match(/.jpeg/ig) !== null || props.filename.match(/.gif/ig) !== null) {
@@ -29876,7 +29874,8 @@ class View extends React.Component {
       },
       body: JSON.stringify({
         "fileName": targetFilename,
-        "filePath": this.state.folderPath
+        "filePath": this.state.folderPath,
+        "screenSize": window.screen.width
       })
     }).then(res => res.blob()).then(result => {
       var reader = new FileReader();
