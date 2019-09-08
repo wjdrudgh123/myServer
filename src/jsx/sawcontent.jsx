@@ -12,7 +12,7 @@ const SawContent = (props) => {
     }else if(props.filename.match(/pdf/ig) !== null){
         let content = props.filecontent.map((c, i) => 
             <div key={i}>
-                <img src={"data:image/png;base64,"+c} width="100%" height="90%"/>
+                <img src={"data:image/png;base64,"+c}/>
             </div>
         )
         data = content;

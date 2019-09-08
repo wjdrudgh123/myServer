@@ -150,6 +150,7 @@ class View extends React.Component{
         });
     }
     getFileContext(e){
+        
         var targetFilename = e.target.id;
         this.fileViewOpen();
         fetch("/getFileContext", {
@@ -159,7 +160,8 @@ class View extends React.Component{
             },
             body:JSON.stringify({
                 "fileName":targetFilename,
-                "filePath":this.state.folderPath
+                "filePath":this.state.folderPath,
+                "screenSize":window.screen.width
             })
         }).then((res)=>res.blob()).then((result)=>{
             var reader = new FileReader();
