@@ -85,11 +85,11 @@ app.post("/getFileContext", (req, res)=>{
     }else if(req.body.fileName.match(/.pdf/gi) !== null){
         let screenSize = "1300x1300";
         if(req.body.screenSize < 512){
-            screenSize = "300x300"
+            screenSize = "400x400"
         }
         fs.readFile(path, (err, data) => {
             const pdf2pic = new PDF2Pic({
-                density: 500,           // output pixels per inch
+                density: 300,           // output pixels per inch
                 savename: "untitled",   // output file name
                 savedir: __dirname+"/dist/img/tempimg/",    // output file location
                 format: "png",          // output file format
