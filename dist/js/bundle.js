@@ -29663,7 +29663,7 @@ const SawContent = props => {
       height: "90%"
     });
   } else {
-    data = React.createElement("h3", null, "\uD30C\uC77C\uC744 \uC77D\uB294 \uC911\uC785\uB2C8\uB2E4...");
+    data = React.createElement("h2", null, "\uD30C\uC77C\uC744 \uC77D\uB294 \uC911\uC785\uB2C8\uB2E4...");
   }
 
   return React.createElement("div", {

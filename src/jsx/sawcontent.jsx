@@ -20,7 +20,7 @@ const SawContent = (props) => {
     || props.filename.match(/.gif/ig) !== null){
         data = <img src={"data:image/"+props.filename.split(".")[1]+";base64,"+props.filecontent} width="100%" height="90%"/>
     }else{
-        data = <h3>파일을 읽는 중입니다...</h3>;
+        data = <h2>파일을 읽는 중입니다...</h2>;
     }
     return(
         <div className={"sawView "+state}>
